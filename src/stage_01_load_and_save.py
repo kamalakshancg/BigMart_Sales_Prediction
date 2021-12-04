@@ -20,6 +20,7 @@ def load_save(config_path):
 
     create_dir(dirs=[raw_local_dir_path])
     #print(data.head())
+    
     data.to_csv(raw_local_file_path,sep=',',index=False)
 
 if __name__ == "__main__":
