@@ -1,4 +1,6 @@
-data_source: "https://www.kaggle.com/brijbhushannanda1979/bigmart-sales-data"
+#data_source: "https://www.kaggle.com/brijbhushannanda1979/bigmart-sales-data"
+
+data_source: "https://raw.githubusercontent.com/shrikant-temburwar/Big-Mart-Sales-Prediction/master/train.csv"
 
 artifacts:
   artifacts_dir: artifacts
