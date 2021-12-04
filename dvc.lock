@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   load_save_stage:
-    cmd: python src/stage_01_load_and_save.py
+    cmd: python src/stage_01_load_and_save.py --config=config/config.yaml
     deps:
     - path: config/config.yaml
       md5: 89b48ef70123b4f63c3ec394d5f1642f
