@@ -1,9 +1,13 @@
-data_source: "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+#data_source: "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
 
-#data_source: "https://raw.githubusercontent.com/shrikant-temburwar/Big-Mart-Sales-Prediction/master/train.csv"
+data_source: "https://raw.githubusercontent.com/shrikant-temburwar/Big-Mart-Sales-Prediction/master/train.csv"
 
 artifacts:
   artifacts_dir: artifacts
   raw_local_dir: raw_local_dir
   raw_local_file: data.csv
+
+  raw_local_split_dir: raw_local_split_dir
+  local_test_file: test.csv
+  local_train_file: train.csv
   

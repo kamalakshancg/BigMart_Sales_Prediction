@@ -19,7 +19,7 @@ def load_save(config_path):
     raw_local_file_path= os.path.join(raw_local_dir_path,raw_local_file)
 
     create_dir(dirs=[raw_local_dir_path])
-    #print(data.head())
+    
     
     data.to_csv(raw_local_file_path,sep=',',index=False)
 
