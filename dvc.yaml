@@ -17,3 +17,12 @@ stages:
     outs:
       - artifacts/raw_local_split_dir/test.csv
       - artifacts/raw_local_split_dir/train.csv
+    
+  model_creation:
+    cmd: python src/stage_03_model_creation.py --config=config/config.yaml
+    deps:
+      - src/stage_03_model_creation.py
+      - src/utils/all_utils.py
+      - config/config.yaml
+    outs:
+      - artifacts/Models/random_model.pkl
