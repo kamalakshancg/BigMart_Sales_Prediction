@@ -8,8 +8,8 @@ artifacts:
   raw_local_file: data.csv
 
   raw_local_split_dir: raw_local_split_dir
-  local_test_file: test.csv
-  local_train_file: train.csv
+  local_test_file: salestest.csv
+  local_train_file: salestrain.csv
   models: Models
   model_file: random_model.pkl
   

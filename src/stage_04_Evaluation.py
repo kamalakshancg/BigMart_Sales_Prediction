@@ -1,38 +1,29 @@
 import pandas as pd
 import numpy as np
 import pickle
-import joblib
 import os
 import yaml
 import argparse
 from src.utils.all_utils import read_yaml,create_dir
-from sklearn.model_selection import train_test_split
+
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
-from sklearn.model_selection import RandomizedSearchCV
-
-def ModelCreation(config_path):
 
 
-    
-
+def Evaluation(config_path):
 
     contents = read_yaml(config_path)
 
     artifacts_dir = contents['artifacts']['artifacts_dir']
     raw_local_split_dir = contents['artifacts']['raw_local_split_dir']
    
-    train_file_name = contents['artifacts']['local_train_file']
+    test_file_name = contents['artifacts']['local_test_file']
     raw_local_data_file_path = os.path.join(artifacts_dir,raw_local_split_dir)
-    train_file_path = os.path.join(raw_local_data_file_path,train_file_name)
+    test_file_path = os.path.join(raw_local_data_file_path,test_file_name)
 
 
-
-
-    train = pd.read_csv(train_file_path)
+    train = pd.read_csv(test_file_path)
 
     print(train)
     train['Item_Weight'].fillna(train['Item_Weight'].mean(),inplace=True)
@@ -74,51 +65,18 @@ def ModelCreation(config_path):
     #Splitting the data
     x = train.drop('Item_Outlet_Sales',axis=1)
     y = train['Item_Outlet_Sales']
-    xtrain,xtest,ytrain,ytest = train_test_split(x,y,test_size=0.2,random_state = 0)
-
-    #preproccessing
-   
-    scaler = StandardScaler()
-    xtrain = scaler.fit_transform(xtrain)
-    xtest = scaler.transform(xtest)
-
-    #Model creation
-   
-    model = RandomForestRegressor()
-    print("Entering model creation")
-    model.fit(xtrain,ytrain)
-    rypred = model.predict(xtest)
-    r2_score(ytest,rypred)
-    print("initial score:",r2_score)
-
-    #Hyperparameter tunning
-    #Hyperparamter tunning on randomforest
-   
-    param_grid ={
-            'n_estimators':[i for i in range(200,2001,200)],
-            'max_depth':[int(i) for i in np.linspace(10,1000,10)],
-            'min_samples_split' : [2, 5, 10,14],
-            'min_samples_leaf' : [1, 2, 4,6,8],
-            'max_features' : ['auto', 'sqrt','log2']
-    }
-    best_r_model = RandomizedSearchCV(estimator=RandomForestRegressor(),param_distributions=param_grid,cv = 3)
-    print(best_r_model.estimator)
-    best_r_model.fit(xtrain,ytrain)
-    random_ypred = best_r_model.predict(xtest)
-    r2_score(ytest,random_ypred)
-    print("Running hyperparameter tunning")
-    print("r2_score: ",r2_score(ytest,random_ypred))
-
-    local_model_dir = contents['artifacts']['models']
-    local_model_file = contents['artifacts']['model_file']
-    raw_local_model_dir_path = os.path.join(artifacts_dir,local_model_dir)
-    raw_local_model_file_path = os.path.join(raw_local_model_dir_path,local_model_file)
-    create_dir(dirs=[raw_local_model_dir_path])
     
-    # with open(raw_local_model_file_path,"wb") as model_file_point:
-    #     pickle.dump(best_r_model,model_file_point)
-    print("raw_local_model_file_path:",raw_local_model_file_path)
-    joblib.dump(raw_local_model_file_path,best_r_model)
+    #preproccessing
+    scaler = StandardScaler()
+    xtest = scaler.fit_transform(x)
+    
+    file = open("artifacts/Models/random_model.pkl","rb")
+    best_r_model = pickle.load(file)
+     
+    random_ypred = best_r_model.predict(xtest)
+    print("r2_score: ",r2_score(y,random_ypred))
+
+   
 
 
 if __name__ == "__main__":
@@ -129,4 +87,4 @@ if __name__ == "__main__":
     parsed_args = args.parse_args()
 
     #ModelCreation(config_path=parsed_args.config)
-    ModelCreation("config/config.yaml")
+    Evaluation("config/config.yaml")
