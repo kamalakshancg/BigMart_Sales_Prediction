@@ -1,0 +1,46 @@
+schema: '2.0'
+stages:
+  load_save_stage:
+    cmd: python src/stage_01_load_and_save.py --config=config/config.yaml
+    deps:
+    - path: config/config.yaml
+      md5: d33e6f8c998333c2951b6c4ee22fb12a
+      size: 491
+    - path: src/stage_01_load_and_save.py
+      md5: 23438f329c90af36d05ddbfdc1723abc
+      size: 987
+    - path: src/utils/all_utils.py
+      md5: 51e25752efee5d0f4a0aaf4b2636e5a7
+      size: 284
+    outs:
+    - path: artifacts/raw_local_dir/data.csv
+      md5: d7375905f6a3e6fe97a2e31d54f33a55
+      size: 886585
+  model_creation:
+    cmd: python src/stage_03_model_creation.py --config=config/config.yaml
+    deps:
+    - path: config/config.yaml
+      md5: d33e6f8c998333c2951b6c4ee22fb12a
+      size: 491
+    - path: src/stage_03_model_creation.py
+      md5: 2919854fc9d895e11a30bc05d2a2be31
+      size: 5093
+    - path: src/utils/all_utils.py
+      md5: 51e25752efee5d0f4a0aaf4b2636e5a7
+      size: 284
+    outs:
+    - path: artifacts/Models/random_model.pkl
+      md5: c341d773bea7a4ed0ddd5402d172972d
+      size: 18016091
+  model_evaluation:
+    cmd: python src/stage_04_Evaluation.py --config=config/config.yaml
+    deps:
+    - path: config/config.yaml
+      md5: d33e6f8c998333c2951b6c4ee22fb12a
+      size: 491
+    - path: src/stage_04_Evaluation.py
+      md5: 4a89d695020d283a37c28ebccc66cc2f
+      size: 3689
+    - path: src/utils/all_utils.py
+      md5: 51e25752efee5d0f4a0aaf4b2636e5a7
+      size: 284
