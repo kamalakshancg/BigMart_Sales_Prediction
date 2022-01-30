@@ -8,15 +8,15 @@ stages:
     outs: 
       - artifacts/raw_local_dir/data.csv
 
-  split_stage:
-    cmd: python src/stage_02_split_data.py --config=config/config.yaml
-    deps:
-      - src/stage_02_split_data.py
-      - src/utils/all_utils.py
-      - config/config.yaml
-    outs:
-      - artifacts/raw_local_split_dir/test.csv
-      - artifacts/raw_local_split_dir/train.csv
+  # split_stage:
+  #   cmd: python src/stage_02_split_data.py --config=config/config.yaml
+  #   deps:
+  #     - src/stage_02_split_data.py
+  #     - src/utils/all_utils.py
+  #     - config/config.yaml
+  #   outs:
+  #     - artifacts/raw_local_split_dir/test.csv
+  #     - artifacts/raw_local_split_dir/train.csv
     
   model_creation:
     cmd: python src/stage_03_model_creation.py --config=config/config.yaml
@@ -26,3 +26,10 @@ stages:
       - config/config.yaml
     outs:
       - artifacts/Models/random_model.pkl
+  
+  model_evaluation:
+    cmd: python src/stage_04_Evaluation.py --config=config/config.yaml
+    deps:
+      - src/stage_04_Evaluation.py
+      - src/utils/all_utils.py
+      - config/config.yaml

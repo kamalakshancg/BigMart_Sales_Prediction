@@ -1,5 +1,6 @@
 dvc
 pandas
+joblib
 numpy
 scikit-learn
 

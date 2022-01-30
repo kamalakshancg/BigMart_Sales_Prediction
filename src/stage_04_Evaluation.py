@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import joblib
 import pickle
 import os
 import yaml
@@ -23,7 +24,7 @@ def Evaluation(config_path):
     test_file_path = os.path.join(raw_local_data_file_path,test_file_name)
 
 
-    train = pd.read_csv(test_file_path)
+    train = pd.read_csv(test_file_path,index_col=0)
 
     print(train)
     train['Item_Weight'].fillna(train['Item_Weight'].mean(),inplace=True)
@@ -66,19 +67,24 @@ def Evaluation(config_path):
     x = train.drop('Item_Outlet_Sales',axis=1)
     y = train['Item_Outlet_Sales']
     
+    print("=======================================")
+    print(x)
     #preproccessing
     scaler = StandardScaler()
     xtest = scaler.fit_transform(x)
     
-    file = open("artifacts/Models/random_model.pkl","rb")
-    best_r_model = pickle.load(file)
+    local_model_dir = contents['artifacts']['models']
+    local_model_file = contents['artifacts']['model_file']
+    raw_local_model_dir_path = os.path.join(artifacts_dir,local_model_dir)
+    raw_local_model_file_path = os.path.join(raw_local_model_dir_path,local_model_file)
+
+   
+    best_r_model = joblib.load(raw_local_model_file_path)
      
     random_ypred = best_r_model.predict(xtest)
     print("r2_score: ",r2_score(y,random_ypred))
 
    
-
-
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
 
@@ -87,4 +93,4 @@ if __name__ == "__main__":
     parsed_args = args.parse_args()
 
     #ModelCreation(config_path=parsed_args.config)
-    Evaluation("config/config.yaml")
+    Evaluation(config_path=parsed_args.config)

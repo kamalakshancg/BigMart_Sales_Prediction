@@ -18,8 +18,6 @@ def ModelCreation(config_path):
 
 
     
-
-
     contents = read_yaml(config_path)
 
     artifacts_dir = contents['artifacts']['artifacts_dir']
@@ -115,10 +113,11 @@ def ModelCreation(config_path):
     raw_local_model_file_path = os.path.join(raw_local_model_dir_path,local_model_file)
     create_dir(dirs=[raw_local_model_dir_path])
     
-    # with open(raw_local_model_file_path,"wb") as model_file_point:
-    #     pickle.dump(best_r_model,model_file_point)
+    with open(raw_local_model_file_path,"wb") as model_file_point:
+        pickle.dump(best_r_model,model_file_point)
+        
     print("raw_local_model_file_path:",raw_local_model_file_path)
-    joblib.dump(raw_local_model_file_path,best_r_model)
+    joblib.dump(best_r_model,raw_local_model_file_path)
 
 
 if __name__ == "__main__":
@@ -129,4 +128,4 @@ if __name__ == "__main__":
     parsed_args = args.parse_args()
 
     #ModelCreation(config_path=parsed_args.config)
-    ModelCreation("config/config.yaml")
+    ModelCreation(config_path=parsed_args.config)
