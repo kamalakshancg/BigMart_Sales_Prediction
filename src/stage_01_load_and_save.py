@@ -2,9 +2,16 @@ from src.utils.all_utils import read_yaml,create_dir
 import os
 import pandas as pd
 import argparse
+import logging
 
 def load_save(config_path):
-    #path_to_config = "/home/kamli/DVC_Pipline/BigMartDVC/config/config.yaml"
+    logger = logging.getLogger('')
+    f_handler = logging.FileHandler('load_save.log')
+    f_handler.setLevel(logging.ERROR)
+    f_format = logging.Formatter('%(asctime)s %(levelname)s [%(funcName)s] %(message)s')
+    f_handler.setFormatter(f_format)
+    logger.addHandler(f_handler)
+
 
     contents = read_yaml(config_path)
     
@@ -14,11 +21,14 @@ def load_save(config_path):
     local_dir = contents['artifacts']['raw_local_dir']
     raw_local_file= contents['artifacts']['raw_local_file']
 
-    raw_local_dir_path = os.path.join(artifacts_dir,local_dir)
-
-    raw_local_file_path= os.path.join(raw_local_dir_path,raw_local_file)
-
-    create_dir(dirs=[raw_local_dir_path])
+    
+    try:
+        raw_local_dir_path = os.path.join(artifacts_dir,local_dir)
+        raw_local_file_path= os.path.join(raw_local_dir_path,raw_local_file)
+        create_dir(dirs=[raw_local_dir_path])
+        logger.error("Folder created")
+    except:
+        logger.error("Error while creating folder or crating path")
     
     
     data.to_csv(raw_local_file_path,sep=',',index=False)

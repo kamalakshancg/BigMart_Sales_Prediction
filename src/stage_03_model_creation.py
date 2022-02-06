@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 import joblib
 import os
+import logging
 import yaml
 import argparse
 from src.utils.all_utils import read_yaml,create_dir
@@ -15,9 +16,13 @@ from sklearn.metrics import r2_score
 from sklearn.model_selection import RandomizedSearchCV
 
 def ModelCreation(config_path):
+    logger = logging.getLogger('')
+    f_handler = logging.FileHandler('ModelCreation.log')
+    f_handler.setLevel(logging.ERROR)
+    f_format = logging.Formatter('%(asctime)s %(levelname)s [%(funcName)s] %(message)s')
+    f_handler.setFormatter(f_format)
+    logger.addHandler(f_handler)
 
-
-    
     contents = read_yaml(config_path)
 
     artifacts_dir = contents['artifacts']['artifacts_dir']
@@ -27,12 +32,8 @@ def ModelCreation(config_path):
     raw_local_data_file_path = os.path.join(artifacts_dir,raw_local_split_dir)
     train_file_path = os.path.join(raw_local_data_file_path,train_file_name)
 
-
-
-
     train = pd.read_csv(train_file_path)
 
-    print(train)
     train['Item_Weight'].fillna(train['Item_Weight'].mean(),inplace=True)
 
     #Random sample Imputation for Outlet_size feature
@@ -44,7 +45,6 @@ def ModelCreation(config_path):
     train.drop('Outlet_Size',axis=1,inplace=True)
 
     #Handling categorical data
-   
     lebel_encoder =  LabelEncoder()
 
     #replacing ('low fat',LF) variables to 'Low Fat' and 'reg' to 'Regular' beacause they are same 
@@ -83,13 +83,10 @@ def ModelCreation(config_path):
     #Model creation
    
     model = RandomForestRegressor()
-    print("Entering model creation")
     model.fit(xtrain,ytrain)
     rypred = model.predict(xtest)
     r2_score(ytest,rypred)
-    print("initial score:",r2_score)
-
-    #Hyperparameter tunning
+   
     #Hyperparamter tunning on randomforest
    
     param_grid ={
@@ -100,24 +97,22 @@ def ModelCreation(config_path):
             'max_features' : ['auto', 'sqrt','log2']
     }
     best_r_model = RandomizedSearchCV(estimator=RandomForestRegressor(),param_distributions=param_grid,cv = 3)
-    print(best_r_model.estimator)
+   
     best_r_model.fit(xtrain,ytrain)
     random_ypred = best_r_model.predict(xtest)
     r2_score(ytest,random_ypred)
-    print("Running hyperparameter tunning")
     print("r2_score: ",r2_score(ytest,random_ypred))
 
     local_model_dir = contents['artifacts']['models']
     local_model_file = contents['artifacts']['model_file']
     raw_local_model_dir_path = os.path.join(artifacts_dir,local_model_dir)
     raw_local_model_file_path = os.path.join(raw_local_model_dir_path,local_model_file)
+    logger.debug("raw_local_model_file_path:",raw_local_model_file_path)
     create_dir(dirs=[raw_local_model_dir_path])
-    
-    with open(raw_local_model_file_path,"wb") as model_file_point:
-        pickle.dump(best_r_model,model_file_point)
-        
-    print("raw_local_model_file_path:",raw_local_model_file_path)
-    joblib.dump(best_r_model,raw_local_model_file_path)
+    try:
+        joblib.dump(best_r_model,raw_local_model_file_path)
+    except:
+        logger.error("Model object is not dumped")
 
 
 if __name__ == "__main__":
@@ -127,5 +122,4 @@ if __name__ == "__main__":
 
     parsed_args = args.parse_args()
 
-    #ModelCreation(config_path=parsed_args.config)
     ModelCreation(config_path=parsed_args.config)

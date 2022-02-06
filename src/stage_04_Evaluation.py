@@ -4,6 +4,7 @@ import joblib
 import pickle
 import os
 import yaml
+import logging
 import argparse
 from src.utils.all_utils import read_yaml,create_dir
 
@@ -13,6 +14,12 @@ from sklearn.metrics import r2_score
 
 
 def Evaluation(config_path):
+    logger = logging.getLogger('')
+    f_handler = logging.FileHandler('Evaluation.log')
+    f_handler.setLevel(logging.ERROR)
+    f_format = logging.Formatter('%(asctime)s %(levelname)s [%(funcName)s] %(message)s')
+    f_handler.setFormatter(f_format)
+    logger.addHandler(f_handler)
 
     contents = read_yaml(config_path)
 
@@ -23,10 +30,8 @@ def Evaluation(config_path):
     raw_local_data_file_path = os.path.join(artifacts_dir,raw_local_split_dir)
     test_file_path = os.path.join(raw_local_data_file_path,test_file_name)
 
-
     train = pd.read_csv(test_file_path,index_col=0)
 
-    print(train)
     train['Item_Weight'].fillna(train['Item_Weight'].mean(),inplace=True)
 
     #Random sample Imputation for Outlet_size feature
@@ -38,7 +43,6 @@ def Evaluation(config_path):
     train.drop('Outlet_Size',axis=1,inplace=True)
 
     #Handling categorical data
-   
     lebel_encoder =  LabelEncoder()
 
     #replacing ('low fat',LF) variables to 'Low Fat' and 'reg' to 'Regular' beacause they are same 
@@ -67,8 +71,6 @@ def Evaluation(config_path):
     x = train.drop('Item_Outlet_Sales',axis=1)
     y = train['Item_Outlet_Sales']
     
-    print("=======================================")
-    print(x)
     #preproccessing
     scaler = StandardScaler()
     xtest = scaler.fit_transform(x)
@@ -77,20 +79,19 @@ def Evaluation(config_path):
     local_model_file = contents['artifacts']['model_file']
     raw_local_model_dir_path = os.path.join(artifacts_dir,local_model_dir)
     raw_local_model_file_path = os.path.join(raw_local_model_dir_path,local_model_file)
+    
+    logger.debug("raw_local_model_file_path",raw_local_model_file_path)
 
-   
-    best_r_model = joblib.load(raw_local_model_file_path)
+    try:
+        best_r_model = joblib.load(raw_local_model_file_path)
+    except:
+        logger.error("Model not loaded")
      
     random_ypred = best_r_model.predict(xtest)
     print("r2_score: ",r2_score(y,random_ypred))
-
-   
+  
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
-
     args.add_argument("--config", "-c", default="config/config.yaml")
-
     parsed_args = args.parse_args()
-
-    #ModelCreation(config_path=parsed_args.config)
     Evaluation(config_path=parsed_args.config)
