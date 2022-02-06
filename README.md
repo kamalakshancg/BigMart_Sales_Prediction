@@ -15,7 +15,8 @@
 Created end to end DVC pipline right from collecting data from github to Evaluation of model
 four stages involved:
 
-Stage 1: Collecting data from github and saving in local system
-Stage 2: Spliting data into train and test data
-Stage 3: Training Model with train data
-Stage 4: Evaluation of Model with Test data
+Stages:
+1. Collecting data from github and saving in local system
+2. Spliting data into train and test data
+3. Training Model with train data
+4. Evaluation of Model with Test data
