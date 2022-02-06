@@ -2,6 +2,7 @@ dvc
 pandas
 joblib
 numpy
+flask
 scikit-learn
 
 #for local packages
