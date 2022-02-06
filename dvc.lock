@@ -16,3 +16,22 @@ stages:
     - path: artifacts/raw_local_dir/data.csv
       md5: d7375905f6a3e6fe97a2e31d54f33a55
       size: 886585
+  split_stage:
+    cmd: python src/stage_02_split_data.py --config=config/config.yaml
+    deps:
+    - path: config/config.yaml
+      md5: d33e6f8c998333c2951b6c4ee22fb12a
+      size: 491
+    - path: src/stage_02_split_data.py
+      md5: 0c1cdb0dc0de31970e351ffbb95c982c
+      size: 1567
+    - path: src/utils/all_utils.py
+      md5: 51e25752efee5d0f4a0aaf4b2636e5a7
+      size: 284
+    outs:
+    - path: artifacts/raw_local_split_dir/salestest.csv
+      md5: 2e105a5803cecc94ce665a3603a1db03
+      size: 185637
+    - path: artifacts/raw_local_split_dir/salestrain.csv
+      md5: 5a67d55a465021d0a2183db86251ed34
+      size: 742645
