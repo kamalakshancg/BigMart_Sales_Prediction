@@ -1,3 +1,4 @@
+from operator import index
 import pandas as pd
 import os
 import yaml
@@ -19,7 +20,8 @@ def Split(config_path):
     artifacts_dir = contents['artifacts']['artifacts_dir']
     raw_local_split_dir = contents['artifacts']['raw_local_split_dir']
     raw_local_dir = contents['artifacts']['raw_local_dir']
-    raw_local_data_file = contents['artifacts']['raw_local_file']
+    #raw_local_data_file = contents['artifacts']['raw_local_file']
+    raw_local_data_file = contents['artifacts']['data_file']
     
     dir_path = os.path.join(artifacts_dir,raw_local_dir)
     raw_local_data_file_path = os.path.join(dir_path,raw_local_data_file)
@@ -43,8 +45,8 @@ def Split(config_path):
 
     train,test = train_test_split(data,test_size=0.2,random_state=42)
     logger.error("data splited succesfully")
-    train.to_csv(train_file_path)
-    test.to_csv(test_file_path)
+    train.to_csv(train_file_path,index=False)
+    test.to_csv(test_file_path,index=False)
     logger.error("train and test data saved as csv file")
 
 if __name__ == "__main__":

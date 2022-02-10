@@ -30,7 +30,7 @@ def Evaluation(config_path):
     raw_local_data_file_path = os.path.join(artifacts_dir,raw_local_split_dir)
     test_file_path = os.path.join(raw_local_data_file_path,test_file_name)
 
-    train = pd.read_csv(test_file_path,index_col=0)
+    train = pd.read_csv(test_file_path)
 
     train['Item_Weight'].fillna(train['Item_Weight'].mean(),inplace=True)
 

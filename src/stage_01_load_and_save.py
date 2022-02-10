@@ -1,5 +1,6 @@
 from src.utils.all_utils import read_yaml,create_dir
 import os
+import csv
 import pandas as pd
 import argparse
 import logging
@@ -20,18 +21,26 @@ def load_save(config_path):
     artifacts_dir = contents['artifacts']['artifacts_dir']
     local_dir = contents['artifacts']['raw_local_dir']
     raw_local_file= contents['artifacts']['raw_local_file']
+    raw_local_text_file= contents['artifacts']['data_file']
 
     
     try:
         raw_local_dir_path = os.path.join(artifacts_dir,local_dir)
         raw_local_file_path= os.path.join(raw_local_dir_path,raw_local_file)
+        raw_local_text_file_path= os.path.join(raw_local_dir_path,raw_local_text_file)
         create_dir(dirs=[raw_local_dir_path])
         logger.error("Folder created")
     except:
         logger.error("Error while creating folder or crating path")
     
+
     
     data.to_csv(raw_local_file_path,sep=',',index=False)
+
+
+    with open(raw_local_text_file_path, "w") as my_output_file:
+        with open(raw_local_file_path, "r") as my_input_file:
+            [ my_output_file.write(" ".join(row)+'\n') for row in csv.reader(my_input_file)]
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
